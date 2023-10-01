@@ -6,26 +6,18 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 class Connection {
-  constructor() {
-    this.filename = "connection.js";
+  
+  static db = process.env.POSTGRES_DB;
+  static user = process.env.POSTGRES_USER;
+  static pwd = process.env.POSTGRES_PASSWORD;
+  static uri = process.env.POSTGRES_URI;
 
-    // Get env variables
-
-    this.db = process.env.POSTGRES_DB;
-    this.user = process.env.POSTGRES_USER;
-    this.pwd = process.env.POSTGRES_PASSWORD;
-    this.uri = process.env.POSTGRES_URI;
-
-    this.sequelize = this.getDb();
-
-    // this.loadUsers();
-  }
-
-  init = () => {
+  static init = () => {
     try {
-      return new Sequelize(this.db, this.user, this.pwd, {
-        host: this.uri,
+      return new Sequelize(Connection.db, Connection.user, Connection.pwd, {
+        host: Connection.uri,
         dialect: "postgres",
+        logging: false,
         define: {
           timestamps: false, // Adds 'createdAt' and 'updatedAt' fields to models
           underscored: true, // Uses snake_case names
@@ -42,12 +34,12 @@ class Connection {
    *
    * @returns {Object} Connection Object
    */
-  getDb = () => {
+  static getDb = () => {
     try {
-      if (!this.sequelize) {
-        this.sequelize = this.init();
+      if (!Connection.sequelize) {
+        Connection.sequelize = Connection.init();
       }
-      return this.sequelize;
+      return Connection.sequelize;
     } catch (error) {
       console.log("DB authntication error");
       return {};
@@ -59,9 +51,9 @@ class Connection {
    *
    * @returns {boolean} Status of DB
    */
-  testConnection = async () => {
+  static testConnection = async () => {
     try {
-      await this.sequelize.authenticate();
+      await Connection.sequelize.authenticate();
       return true;
     } catch (error) {
       throw error;
@@ -73,14 +65,17 @@ class Connection {
    *
    * @returns {boolean} Status of DB
    */
-  closeConnection = async () => {
+  static closeConnection = async () => {
     try {
-      await this.sequelize.close();
+      await Connection.sequelize.close();
+      Connection.sequelize = {}
       return true;
     } catch (error) {
       throw error;
     }
   };
+
+  static sequelize = Connection.getDb();
 }
 
 module.exports = Connection;

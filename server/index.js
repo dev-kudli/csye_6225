@@ -45,11 +45,11 @@ app.use("*", (req, res) => {
   res.status(404).send();
 });
 
-const UserClient = require('database').UserClient;
+const UserClient = require("database").UserClient;
 const userClient = new UserClient();
 
-const fs = require('fs');
-const csv = require('csv-parser');
+const fs = require("fs");
+const csv = require("csv-parser");
 
 // Start server
 app.listen(PORT, () => {
@@ -72,3 +72,5 @@ app.listen(PORT, () => {
   //     await userClient.createUserBulk(users);
   //   })
 });
+
+module.exports = app;

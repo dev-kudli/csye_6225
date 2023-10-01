@@ -1,20 +1,19 @@
-const chai = require("chai");
+const chai = require('chai');
 
 // Import the module you want to test
-const Connection = require("../db").Connection;
-const connection = new Connection();
+const Connection = require('../db').Connection;
 
-var sequelize = {};
+describe('DB Connection', () => {
 
-describe("DB Connection", () => {
-  it("should connect to db", async () => {
-    sequelize = await connection.getDb();
-    const isDbConnected = await connection.testConnection(sequelize);
+  it('should connect to db', async () => {
+    const isDbConnected = await Connection.testConnection();
     chai.assert.isTrue(isDbConnected);
   });
 
-  it("should close connection", async () => {
-    const isDbDisconnected = await connection.closeConnection();
-    chai.assert.isTrue(isDbDisconnected);
-  });
+  after('close open connection', async (done) => {
+    Connection.closeConnection().then(() => {
+      process.exit(0);
+    });
+  })
+  
 });

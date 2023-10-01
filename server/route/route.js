@@ -15,6 +15,6 @@ route.get("/test", (req, res, next) => {
 // Get Health Status
 route.get("/healthz", setNoCachePolicy, getDBHealthStatus);
 
-route.get("/auth", getAuthToken);
+route.post("/auth", getAuthToken);
 
 module.exports = route;

@@ -1,8 +1,6 @@
 // Import custom files
 const Connection = require("database").Connection;
 
-const connection = new Connection();
-
 /**
  * Get DB Status
  *
@@ -12,12 +10,23 @@ const connection = new Connection();
  */
 const getDBHealthStatus = async (req, res) => {
   try {
-    const isDbRunning = await connection.testConnection();
-    if (!isDbRunning) throw new Error("Database not found");
-    console.log("Connected to the database.");
+    const isDBRunning = await Connection.testConnection();
+    if (!isDBRunning) throw new Error("Database not found");
     res.status(200).send();
   } catch (error) {
     console.error("Unable to connect to the database:", error);
+    res.status(503).send();
+  }
+};
+
+const closeDBConnection = async (req, res) => {
+  try {
+    const isDBClosed = await Connection.closeConnection();
+    if (!isDBClosed) throw new Error("Database not closed");
+    console.log("Closed DB connection.");
+    res.status(200).send();
+  } catch (error) {
+    console.error("Unable to close connection:", error);
     res.status(503).send();
   }
 };
