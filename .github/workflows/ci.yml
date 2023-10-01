@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install PostgreSQL
+        run: |
+          sudo apt-get update
+          sudo apt-get install postgresql
+        # Start PostgreSQL service
+      - name: Start PostgreSQL
+        run: |
+          sudo service postgresql start
+
+      - name: Create PostgreSQL Database
+        run: |
+          sudo -u postgres createdb csye6225
+
+      - name: Install Dependencies
+        run: |
+          cd ./database && npm install
+          cd ../server && npm install
+        # Add more steps here for your project's setup
+
+      - name: Run Integration Tests
+        run: |
+          pwd
+          cd ./database && npm run test
