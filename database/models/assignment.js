@@ -1,9 +1,7 @@
 const { DataTypes } = require("sequelize");
 const Connection = require("../client/connection");
 
-const sequelize = new Connection().sequelize;
-
-const Assignment = sequelize.define(
+const Assignment = Connection.sequelize.define(
   "Assignment",
   {
     id: {

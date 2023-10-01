@@ -1,6 +1,6 @@
 const AuthErrorHandler = require("../error/authErrorHandler");
 
-const AssignmentClient = require('database').AssignmentClient;
+const AssignmentClient = require("database").AssignmentClient;
 
 const assignmentClient = new AssignmentClient();
 

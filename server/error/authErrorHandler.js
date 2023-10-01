@@ -28,12 +28,12 @@ authError = {
     msg: "Permission denied",
     description: "You are not authorized for this action",
     timestamp: new Date().toISOString(),
-  }
+  },
 };
 
 class AuthErrorHandler extends Error {
   constructor(errorCode) {
-    const { statusCode, msg, description } = authError[errorCode]
+    const { statusCode, msg, description } = authError[errorCode];
     super(msg);
     this.statusCode = statusCode;
     this.msg = msg;

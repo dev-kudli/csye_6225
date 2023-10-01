@@ -33,9 +33,7 @@ const createAssignment = async (req, res) => {
 
 const deleteAssignment = async (req, res) => {
   try {
-    const isDeleted = await assignmentClient.deleteAssignment(
-      req.params.id,
-    );
+    const isDeleted = await assignmentClient.deleteAssignment(req.params.id);
     if (isDeleted) res.status(200).send();
     else res.status(201).send();
   } catch (error) {

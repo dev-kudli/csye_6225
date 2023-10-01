@@ -20,7 +20,6 @@ class UserClient {
       throw error;
     }
   };
-
 }
 
 module.exports = UserClient;
