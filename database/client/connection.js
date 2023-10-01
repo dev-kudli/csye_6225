@@ -2,46 +2,85 @@
 const { Sequelize } = require("sequelize");
 
 // Load env variables
-const db = process.env.POSTGRES_DB;
-const user = process.env.POSTGRES_USER;
-const pwd = process.env.POSTGRES_PASSWORD;
-const uri = process.env.POSTGRES_URI;
+const dotenv = require("dotenv");
+dotenv.config();
 
-const init = () => {
-  try {
-    return new Sequelize(db, user, pwd, {
-      host: uri,
-      dialect: "postgres",
-      define: {
-        timestamps: true, // Adds 'createdAt' and 'updatedAt' fields to models
-        paranoid: true, // Adds 'deletedAt' field to models
-        underscored: true, // Uses snake_case for table and column names
-      },
-    });
-  } catch (error) {
-    console.log("Error Connecting to Postgres");
-    return {};
-  }
-};
+class Connection {
+  constructor() {
+    this.filename = "connection.js";
 
-var sequelize;
+    // Get env variables
 
-/**
- * Get DB Connection Object
- *
- * @returns {boolean} Connection Object
- */
-const getDb = () => {
-  try {
-    if (!sequelize) {
-      console.log("Connecting to DB again");
-      return sequelize=init();
-    } else return sequelize;
-  } catch (error) {
-    console.log('DB authntication error');
-    return {}
+    this.db = process.env.POSTGRES_DB;
+    this.user = process.env.POSTGRES_USER;
+    this.pwd = process.env.POSTGRES_PASSWORD;
+    this.uri = process.env.POSTGRES_URI;
+
+    this.sequelize = this.getDb();
+
+    // this.loadUsers();
   }
 
-};
+  init = () => {
+    try {
+      return new Sequelize(this.db, this.user, this.pwd, {
+        host: this.uri,
+        dialect: "postgres",
+        define: {
+          timestamps: false, // Adds 'createdAt' and 'updatedAt' fields to models
+          underscored: true, // Uses snake_case names
+        },
+      });
+    } catch (error) {
+      console.log("Error Connecting to Postgres");
+      return {};
+    }
+  };
 
-module.exports = getDb;
+  /**
+   * Get DB Connection Object
+   *
+   * @returns {Object} Connection Object
+   */
+  getDb = () => {
+    try {
+      if (!this.sequelize) {
+        this.sequelize = this.init();
+      }
+      return this.sequelize;
+    } catch (error) {
+      console.log("DB authntication error");
+      return {};
+    }
+  };
+
+  /**
+   * Test DB connection
+   *
+   * @returns {boolean} Status of DB
+   */
+  testConnection = async () => {
+    try {
+      await this.sequelize.authenticate();
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  /**
+   * Close connection
+   *
+   * @returns {boolean} Status of DB
+   */
+  closeConnection = async () => {
+    try {
+      await this.sequelize.close();
+      return true;
+    } catch (error) {
+      throw error;
+    }
+  };
+}
+
+module.exports = Connection;
