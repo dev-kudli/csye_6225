@@ -1,6 +1,8 @@
 // Import custom files
 const Connection = require("database").Connection;
 
+const GeneralErrorHandler = require("../error/generalErrorHandler");
+
 /**
  * Get DB Status
  *
@@ -10,12 +12,14 @@ const Connection = require("database").Connection;
  */
 const getDBHealthStatus = async (req, res) => {
   try {
+    if (Object.keys(req.query).length > 0) throw new GeneralErrorHandler('GEN_101');
+    if (Object.keys(req.body).length > 0) throw new GeneralErrorHandler('GEN_102');
     const isDBRunning = await Connection.testConnection();
     if (!isDBRunning) throw new Error("Database not found");
     res.status(200).send();
   } catch (error) {
     console.error("Unable to connect to the database:", error);
-    res.status(503).send();
+    res.status(error.statusCode).send(error);
   }
 };
 

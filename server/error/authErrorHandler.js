@@ -19,7 +19,7 @@ authError = {
     statusCode: 401,
     code: "AUTH_103",
     msg: "Invalid credentials",
-    description: "Enter a valid token",
+    description: "Enter a valid token or credentials",
     timestamp: new Date().toISOString(),
   },
   AUTH_104: {
