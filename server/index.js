@@ -8,6 +8,9 @@ const dotenv = require("dotenv");
 const route = require("./route/route");
 const assignmentRoute = require("./route/assignmentRoute");
 const handleUnsupportedMethods = require("./middleware/unsupportedRoute");
+const helper = require('./helper/helper');
+
+const syncModels = require("database").syncModels;
 
 // Load environment variables
 dotenv.config();
@@ -45,32 +48,20 @@ app.use("*", (req, res) => {
   res.status(404).send();
 });
 
-const UserClient = require("database").UserClient;
-const userClient = new UserClient();
-
-const fs = require("fs");
-const csv = require("csv-parser");
+(async () => {
+  try {
+    await syncModels();
+    const users = await helper.readUsersFromCsv();
+    const addedUsers = await helper.createDefaultUsers(users);
+    console.log(`Added ${addedUsers} users from .csv file`);
+  } catch (error) {
+    console.log(error);
+  }
+})();
 
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running successfully on PORT ${PORT}`);
-  const users = [];
-
-  // fs.createReadStream('../deployment/users.csv')
-  //   .pipe(csv())
-  //   .on('data', (data) => {
-  //     const jsonItem = {
-  //       first_name: data.first_name,
-  //       last_name: data.last_name,
-  //       email: data.email,
-  //       password: data.password
-  //     };
-  //     users.push(jsonItem);
-  //   })
-  //   .on('end', async () => {
-  //     console.log('users array created', users)
-  //     await userClient.createUserBulk(users);
-  //   })
 });
 
 module.exports = app;

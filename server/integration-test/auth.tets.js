@@ -30,9 +30,9 @@ describe("DB Connection", () => {
 
   it("close open connection", (done) => {
     Connection.closeConnection().then((isDBClosed) => {
-        chai.assert.isTrue(isDBClosed);
-        done();
-        process.exit(0);
-      });
+      chai.assert.isTrue(isDBClosed);
+      done();
+      process.exit(0);
+    });
   });
 });

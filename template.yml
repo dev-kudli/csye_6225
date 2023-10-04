@@ -54,40 +54,40 @@ Resources:
       SubnetId: !Ref CSYE6225SubnetA
       RouteTableId: !Ref CSYE6225PublicRouteTable
 
-  CSYE6225DBSecurityGroup:
-    Type: 'AWS::EC2::SecurityGroup'
-    Properties:
-      GroupDescription: Allow access to the mysql from the Web Server
-      VpcId: !Ref CSYE6225VPC
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 5432
-          ToPort: 5432
-          CidrIp: 10.0.0.0/16
+  # CSYE6225DBSecurityGroup:
+  #   Type: 'AWS::EC2::SecurityGroup'
+  #   Properties:
+  #     GroupDescription: Allow access to the mysql from the Web Server
+  #     VpcId: !Ref CSYE6225VPC
+  #     SecurityGroupIngress:
+  #       - IpProtocol: tcp
+  #         FromPort: 5432
+  #         ToPort: 5432
+  #         CidrIp: 10.0.0.0/16
 
-  CSYE6225DBSubnetGroup:
-    Type: 'AWS::RDS::DBSubnetGroup'
-    Properties:
-      DBSubnetGroupDescription: Subnet group for the RDS instance
-      SubnetIds:
-        - !Ref CSYE6225SubnetA
-        - !Ref CSYE6225SubnetB
+  # CSYE6225DBSubnetGroup:
+  #   Type: 'AWS::RDS::DBSubnetGroup'
+  #   Properties:
+  #     DBSubnetGroupDescription: Subnet group for the RDS instance
+  #     SubnetIds:
+  #       - !Ref CSYE6225SubnetA
+  #       - !Ref CSYE6225SubnetB
   
-  CSYE6225DBInstance:
-    Type: 'AWS::RDS::DBInstance'
-    Properties:
-      DBInstanceIdentifier: mydbinstance
-      AllocatedStorage: 20
-      DBInstanceClass: db.t3.micro
-      Engine: postgres
-      MasterUsername: csye6225
-      MasterUserPassword: csye6225
-      DBSubnetGroupName: !Ref CSYE6225DBSubnetGroup
-      PubliclyAccessible: false
-      MultiAZ: false
-      AvailabilityZone: us-east-1a
-      VPCSecurityGroups:
-        - !Ref CSYE6225DBSecurityGroup
+  # CSYE6225DBInstance:
+  #   Type: 'AWS::RDS::DBInstance'
+  #   Properties:
+  #     DBInstanceIdentifier: mydbinstance
+  #     AllocatedStorage: 20
+  #     DBInstanceClass: db.t3.micro
+  #     Engine: postgres
+  #     MasterUsername: csye6225
+  #     MasterUserPassword: csye6225
+  #     DBSubnetGroupName: !Ref CSYE6225DBSubnetGroup
+  #     PubliclyAccessible: false
+  #     MultiAZ: false
+  #     AvailabilityZone: us-east-1a
+  #     VPCSecurityGroups:
+  #       - !Ref CSYE6225DBSecurityGroup
 
   CSYE6225EC2SecurityGroup:
     Type: AWS::EC2::SecurityGroup

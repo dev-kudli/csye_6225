@@ -12,7 +12,7 @@ class AssignmentClient {
    * @param {Object} res - Response Object
    * @returns {Object} Assignment Object
    */
-  createAssignment = async (payload, username) => {
+  createAssignment = async (payload, id) => {
     try {
       const { name, points, num_of_attempts, deadline } = payload;
       const assignment = await Assignment.create({
@@ -20,7 +20,7 @@ class AssignmentClient {
         points: points,
         num_of_attempts: num_of_attempts,
         deadline: deadline,
-        createdBy: username,
+        UserId: id
       });
       return assignment.toJSON();
     } catch (error) {
@@ -43,6 +43,7 @@ class AssignmentClient {
     try {
       const assignment = await Assignment.findOne({
         where: { id: assignmentId },
+        attributes: ['id', 'name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated', 'assignment_created', 'UserId']
       });
       return assignment;
     } catch (error) {
@@ -52,7 +53,9 @@ class AssignmentClient {
 
   getAllAssignment = async () => {
     try {
-      const assignments = await Assignment.findAll();
+      const assignments = await Assignment.findAll({
+        attributes: ['id', 'name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated', 'assignment_created']
+      });
       assignments.forEach((assignment) => {
         return assignment.toJSON();
       });
@@ -61,6 +64,23 @@ class AssignmentClient {
       throw error;
     }
   };
+
+  updateAssignment = async (assignment, assignmentId, userId) => {
+    try {
+      console.log(userId)
+      const [updatedRows, updatedAssignment] = await Assignment.update({
+        ...assignment,
+        assignment_updated: new Date().toISOString(),
+      }, {
+        where: { id: assignmentId },
+        fields: ['name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated'],
+        returning: true
+    });
+    return updatedAssignment;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = AssignmentClient;

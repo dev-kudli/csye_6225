@@ -4,7 +4,23 @@ const assignmentError = {
     code: "ASSGN_101",
     msg: "Assignment not found",
     description:
-      "Expected value is a base64 encoded token in format username:password",
+      "Expected a valid assignment",
+    timestamp: new Date().toISOString(),
+  },
+  ASSGN_102: {
+    statusCode: 400,
+    code: "ASSGN_102",
+    msg: "Invalid deadline",
+    description:
+      "Deadline has to be in the future",
+    timestamp: new Date().toISOString(),
+  },
+  ASSGN_103: {
+    statusCode: 400,
+    code: "ASSGN_103",
+    msg: "Invalid ID",
+    description:
+      "Expected a valid id",
     timestamp: new Date().toISOString(),
   },
 };

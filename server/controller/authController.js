@@ -1,7 +1,8 @@
 // Import custom files
-// const Connection = require("database").Connection;
+const UserClient = require("database").UserClient;
+const AuthErrorHandler = require("../error/authErrorHandler");
 
-// const connection = new Connection();
+const userClient = new UserClient();
 
 /**
  * Get DB Status
@@ -12,16 +13,20 @@
  */
 const getAuthToken = async (req, res) => {
   try {
-    const { username, password } = req.body;
-    if (!username || !password) res.status(401).send();
-    if (username == "csye" && password == "csye") {
-      const textToEncode = `${username}:${password}`;
-      const token = btoa(textToEncode);
-      res.status(200).send(token);
-    }
+    const { email, password } = req.body;
+    if (!email || !password) throw new Error('invalid input')
+
+    const validUser = await userClient.getUser(email);
+    const isValidPassword = await userClient.comparePasswords(password, validUser.password);
+    if (!isValidPassword) throw new AuthErrorHandler('AUTH_103');
+
+    const hashedPassword = await userClient.hashPassword(password);
+
+    const token = Buffer.from(`${email}:${validUser.password}`).toString("base64");
+    res.status(200).send({ token: token });
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
-    res.status(503).send();
+    if (!error.statusCode) error.statusCode = 500;
+    res.status(error.statusCode).send(error);
   }
 };
 
