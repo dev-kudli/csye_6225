@@ -10,20 +10,30 @@ const {
 } = require("../controller/assignmentController.js");
 
 const { isUserAuthenticated } = require("../middleware/auth.js");
+const { isDBOnline } = require("../middleware/auth.js");
+
 const {
   canUserDeleteAssignment,
+  canUserUpdateAssignment
 } = require("../middleware/assignmentAuthorization.js");
 
 const route = express.Router();
 
-route.get("/", isUserAuthenticated, getAllAssignment);
-route.get("/:id", isUserAuthenticated, getAssignment);
+route.get("/", isDBOnline, isUserAuthenticated, getAllAssignment);
+route.get("/:id", isDBOnline, isUserAuthenticated, getAssignment);
 
-route.post("/", isUserAuthenticated, createAssignment);
-route.put("/:id", isUserAuthenticated, canUserDeleteAssignment, updateAssignment)
+route.post("/", isDBOnline, isUserAuthenticated, createAssignment);
+route.put(
+  "/:id",
+  isDBOnline,
+  isUserAuthenticated,
+  canUserUpdateAssignment,
+  updateAssignment,
+);
 
 route.delete(
   "/:id",
+  isDBOnline,
   isUserAuthenticated,
   canUserDeleteAssignment,
   deleteAssignment,

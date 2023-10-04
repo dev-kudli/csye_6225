@@ -8,7 +8,7 @@ const dotenv = require("dotenv");
 const route = require("./route/route");
 const assignmentRoute = require("./route/assignmentRoute");
 const handleUnsupportedMethods = require("./middleware/unsupportedRoute");
-const helper = require('./helper/helper');
+const helper = require("./helper/helper");
 
 const syncModels = require("database").syncModels;
 
@@ -21,7 +21,16 @@ const PORT = process.env.SERVER_PORT;
 // Initialize express
 const app = express();
 
-app.use(bodyParser.json({ extended: true }));
+app.use((req, res, next) => {
+  const contentType = req.headers["content-type"];
+  if (contentType && !contentType.includes("application/json"))
+    res
+      .status(400)
+      .json({
+        error: "Invalid Content-Type. Only application/json is allowed.",
+      });
+  else bodyParser.json({ extended: true })(req, res, next);
+});
 app.use(bodyParser.urlencoded({ extended: true }));
 
 const corsOptions = {
@@ -51,9 +60,12 @@ app.use("*", (req, res) => {
 (async () => {
   try {
     await syncModels();
-    const users = await helper.readUsersFromCsv();
+
+    const filePath = process.env.FILEPATH;
+    console.log(`Loading users from:`, filePath);
+    const users = await helper.readUsersFromCsv(filePath);
     const addedUsers = await helper.createDefaultUsers(users);
-    console.log(`Added ${addedUsers} users from .csv file`);
+    console.log(`Added ${addedUsers} users`);
   } catch (error) {
     console.log(error);
   }
