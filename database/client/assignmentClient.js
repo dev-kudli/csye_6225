@@ -20,7 +20,7 @@ class AssignmentClient {
         points: points,
         num_of_attempts: num_of_attempts,
         deadline: deadline,
-        UserId: id
+        UserId: id,
       });
       return assignment.toJSON();
     } catch (error) {
@@ -35,7 +35,7 @@ class AssignmentClient {
       });
       return isDeleted;
     } catch (error) {
-      throw error;
+      return false;
     }
   };
 
@@ -43,18 +43,35 @@ class AssignmentClient {
     try {
       const assignment = await Assignment.findOne({
         where: { id: assignmentId },
-        attributes: ['id', 'name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated', 'assignment_created', 'UserId']
+        attributes: [
+          "id",
+          "name",
+          "points",
+          "num_of_attempts",
+          "deadline",
+          "assignment_updated",
+          "assignment_created",
+          "UserId"
+        ],
       });
       return assignment;
     } catch (error) {
-      throw error;
+      return false;
     }
   };
 
   getAllAssignment = async () => {
     try {
       const assignments = await Assignment.findAll({
-        attributes: ['id', 'name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated', 'assignment_created']
+        attributes: [
+          "id",
+          "name",
+          "points",
+          "num_of_attempts",
+          "deadline",
+          "assignment_updated",
+          "assignment_created",
+        ],
       });
       assignments.forEach((assignment) => {
         return assignment.toJSON();
@@ -67,20 +84,28 @@ class AssignmentClient {
 
   updateAssignment = async (assignment, assignmentId, userId) => {
     try {
-      console.log(userId)
-      const [updatedRows, updatedAssignment] = await Assignment.update({
-        ...assignment,
-        assignment_updated: new Date().toISOString(),
-      }, {
-        where: { id: assignmentId },
-        fields: ['name', 'points', 'num_of_attempts', 'deadline', 'assignment_updated'],
-        returning: true
-    });
-    return updatedAssignment;
+      const [updatedRows, updatedAssignment] = await Assignment.update(
+        {
+          ...assignment,
+          assignment_updated: new Date().toISOString(),
+        },
+        {
+          where: { id: assignmentId },
+          fields: [
+            "name",
+            "points",
+            "num_of_attempts",
+            "deadline",
+            "assignment_updated",
+          ],
+          returning: true,
+        },
+      );
+      return updatedAssignment;
     } catch (error) {
       throw error;
     }
-  }
+  };
 }
 
 module.exports = AssignmentClient;

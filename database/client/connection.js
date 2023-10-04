@@ -38,7 +38,7 @@ class Connection {
       await Connection.sequelize.authenticate();
       return true;
     } catch (error) {
-      throw error;
+      return false;
     }
   };
 
